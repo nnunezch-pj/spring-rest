@@ -62,6 +62,7 @@ public class PedidoControllerTest {
 
     // ************************************************************
     // CLASE DE CONFIGURACIÓN PARA REEMPLAZAR @MockBean
+    // Configuración para realizar una prueba unitaria de la capa web (simulando @WebMvcTest en Spring 4.x) usando @SpringBootTest + @TestConfiguration.
     // ************************************************************
 
     @TestConfiguration
