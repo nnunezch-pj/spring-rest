@@ -1,11 +1,13 @@
 package pe.gob.pj.springrest.application.service;
 
 import lombok.AllArgsConstructor;
+import pe.gob.pj.springrest.application.dto.PedidoResponse;
 import pe.gob.pj.springrest.domain.enums.EstadoPedido;
 import pe.gob.pj.springrest.domain.model.Cliente;
 import pe.gob.pj.springrest.domain.model.Pedido;
 import pe.gob.pj.springrest.domain.model.Producto;
 import pe.gob.pj.springrest.domain.model.ItemPedido;
+import pe.gob.pj.springrest.infraestructure.mapper.PedidoResponseMapper;
 import pe.gob.pj.springrest.infraestructure.persistence.ClienteRepository;
 import pe.gob.pj.springrest.infraestructure.persistence.PedidoRepository;
 import pe.gob.pj.springrest.infraestructure.persistence.ProductoRepository;
@@ -20,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +34,8 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
+    // ¡IMPORTANTE! Necesitas inyectar el mapper para devolver PedidoResponse
+    private final PedidoResponseMapper responseMapper;
 
     // Constructor para inyección (@Autowired implícito en Spring Boot 3+)
     /*public PedidoService(PedidoRepository pedidoRepository,
@@ -156,4 +161,44 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
+    // ************************************************************
+    // NUEVAS IMPLEMENTACIONES: BÚSQUEDA DE PEDIDOS
+    // ************************************************************
+
+    /**
+     * Busca un pedido por su ID.
+     * Implementa manejo de excepción si el recurso no es encontrado (404).
+     * @param id ID del pedido.
+     * @return El DTO de respuesta del pedido encontrado.
+     */
+    @Transactional(readOnly = true) // Solo lectura, optimizado para consultas
+    public PedidoResponse buscarPedidoPorId(Long id) {
+        LOG.info("Buscando pedido por ID: {}", id);
+
+        // Uso de Optional y orElseThrow, manejando 404 a través de la excepción
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> {
+                    LOG.warn("Pedido ID {} no encontrado.", id);
+                    return new RecursoNoEncontradoException("Pedido", id);
+                });
+
+        return responseMapper.toResponse(pedido);
+    }
+
+    /**
+     * Lista todos los pedidos existentes en el sistema.
+     * (Nota: En un sistema real se debería usar paginación).
+     * @return Lista de DTOs PedidoResponse.
+     */
+    @Transactional(readOnly = true)
+    public List<PedidoResponse> listarTodosPedidos() {
+        LOG.info("Listando todos los pedidos.");
+
+        List<Pedido> pedidos = pedidoRepository.findAll();
+
+        // Convertir la lista de entidades a una lista de DTOs
+        return pedidos.stream()
+                .map(responseMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }

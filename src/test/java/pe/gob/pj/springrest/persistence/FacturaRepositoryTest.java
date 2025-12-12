@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import pe.gob.pj.springrest.domain.model.Factura;
 import pe.gob.pj.springrest.infraestructure.persistence.FacturaRepository;
 
 import java.util.List;
 
+@SpringBootTest
 @Sql(scripts = {"/schema.sql", "/data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD) // Carga el esquema y datos iniciales justo antes de cada test
 public class FacturaRepositoryTest {
 

@@ -1,0 +1,37 @@
+spring.application.name=spring-rest
+# ================================
+# CONFIGURACION DEL SERVIDOR
+# ================================
+server.port=8080
+
+# ================================
+# CONFIGURACION DE BASE DE DATOS (MariaDB)
+# ================================
+spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.username=sa
+spring.datasource.password=
+spring.datasource.driver-class-name=org.h2.Driver
+
+# ================================
+# JPA / HIBERNATE
+# ================================
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MariaDBDialect
+# ================================
+# INICIALIZACION DE DATA
+# ================================
+spring.sql.init.mode=never
+spring.sql.init.schema-locations=schema.sql
+spring.sql.init.data-locations=data.sql
+spring.sql.init.continue-on-error=false
+
+# ================================
+# POOL DE CONEXIONES (HikariCP)
+# ================================
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.idle-timeout=30000
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.max-lifetime=1800000

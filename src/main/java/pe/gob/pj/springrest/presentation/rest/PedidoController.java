@@ -13,6 +13,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -85,5 +87,29 @@ public class PedidoController {
                 .nombre("Cliente Temporal")
                 .email(null)
                 .build();
+    }
+
+    // ===============================================
+    // NUEVOS MÉTODOS GET
+    // ===============================================
+
+    /**
+     * GET /api/pedidos/{id}
+     * Busca un pedido por su ID. Devuelve 404 si no existe (manejo por GlobalExceptionHandler).
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<PedidoResponse> buscarPedidoPorId(@PathVariable Long id) {
+        PedidoResponse response = pedidoService.buscarPedidoPorId(id);
+        return ResponseEntity.ok(response); // HTTP 200 OK
+    }
+
+    /**
+     * GET /api/pedidos
+     * Lista todos los pedidos existentes en el sistema.
+     */
+    @GetMapping
+    public ResponseEntity<List<PedidoResponse>> listarPedidos() {
+        List<PedidoResponse> responseList = pedidoService.listarTodosPedidos();
+        return ResponseEntity.ok(responseList); // HTTP 200 OK
     }
 }
